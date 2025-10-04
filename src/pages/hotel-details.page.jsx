@@ -177,7 +177,7 @@ const HotelDetailsPage = () => {
             </Button>
             <BookingDialog
               hotelName={hotel.name}
-              hotelId={id}
+              hotelId={_id}
               onSubmit={handleBook}
               isLoading={isCreateBookingLoading}
             />
