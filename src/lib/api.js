@@ -1,49 +1,3 @@
-// const getAllHotels = async () => {
-//   // TODO: Make a GET request to the API
-//   try{
-//     const res = await fetch("http://localhost:8000/api/hotels", {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   });
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch hotels");
-//   }
-//   const data = await res.json();
-//   // console.log(data);
-
-
-//   //   console.log("A");
-//   //   fetch("http://localhost:8000/api/hotels", {
-//   //     method: "GET",
-//   //     headers: {
-//   //       "Content-Type": "application/json",
-//   //     },
-//   //   })
-//   //     .then((res) => {
-//   //       console.log(res);
-//   //       return res.json();
-//   //     })
-//   //     .then((data) => {
-//   //       console.log(data);
-//   //     })
-//   //     .catch((error) => {
-//   //       console.log(error);
-//   //     });
-//   //   console.log("B");
-//   // TODO: Return the data
-//   return data;
-
-//   }
-//   catch (error) {
-//     throw new Error("Failed to fetch hotels: " + error.message);
-//   }
-  
-// };
-
-// export { getAllHotels };
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 
@@ -51,7 +5,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:8000/api/',
+    baseUrl: import.meta.env.VITE_BACKEND_URL,
     prepareHeaders: async (headers) => {
       return new Promise((resolve) => {
         async function checkToken() {
@@ -114,6 +68,7 @@ export const api = createApi({
       query: () => 'locations',
       // providesTags: (result,error,id) =>[{type:'Location',id:'LIST'}],
     }),
+
   }),
 })
 
