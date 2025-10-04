@@ -2,7 +2,7 @@ import CheckoutForm from "@/components/CheckoutForm";
 import { useSearchParams } from "react-router";
 import { useGetBookingbyIdQuery } from "@/lib/api";
 
-export function PaymentPage() {
+const PaymentPage=() =>{
     const [searchParams] = useSearchParams();
     const bookingId = searchParams.get('bookingId');
     const { data: booking, isLoading: isBookingLoading } = useGetBookingbyIdQuery(bookingId);
@@ -20,3 +20,5 @@ export function PaymentPage() {
         </main>
     );
 }
+
+export default PaymentPage;
