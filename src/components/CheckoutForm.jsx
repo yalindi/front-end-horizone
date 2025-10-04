@@ -16,7 +16,7 @@ const CheckoutForm=({bookingId})=>{
             method:'POST',
             headers:{
                 'Content-Type':'application/json',
-                Autherization:`Bearer ${token}`,
+                Authorization:`Bearer ${token}`,
             },
             body:JSON.stringify({bookingId}),
         });

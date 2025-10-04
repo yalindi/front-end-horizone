@@ -12,13 +12,14 @@ import { useAddReviewMutation, useGetHotelByIdQuery,useCreateBookingMutation } f
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@clerk/clerk-react";
 import { BookingDialog } from "@/components/BookingDialog";
-import { check } from "zod";
+import { useNavigate } from "react-router";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
   const [addReview, { isLoading: isAddReviewLoading }] = useAddReviewMutation();
   const [createBooking, { isLoading: isCreateBookingLoading }] = useCreateBookingMutation();
+  const Navigate = useNavigate();
 
   const { user } = useUser();
 
