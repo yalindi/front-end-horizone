@@ -9,6 +9,8 @@ import NotFoundPage from './pages/not-found.page.jsx'
 import HotelsPage from './pages/hotels.page.jsx'
 import HotelDetailsPage from './pages/hotel-details.page.jsx'
 import MyAccountPage from './pages/my-account.jsx'
+import { PaymentPage } from './pages/payment.page'
+import { CompletePage } from './pages/complete.page'
 
 import {BrowserRouter,Routes,Route } from 'react-router'
 import { store } from './lib/store'
@@ -39,6 +41,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/hotels" element={<HotelsPage />} />
         <Route element={<ProtectLayout/>}>
           <Route path="/hotels/:_id" element={<HotelDetailsPage />} />
+          <Route path="/booking/payment" element={<PaymentPage />} />
+          <Route path="/booking/complete" element={<CompletePage />} />
           <Route path="/account" element={<MyAccountPage />} />
           <Route element={<AdminProtectLayout/>}>
             <Route path="/admin/create-hotel" element={<CreateHotelPage/>}/>
