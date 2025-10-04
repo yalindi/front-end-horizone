@@ -26,16 +26,12 @@ export const api = createApi({
   endpoints: (build) => ({
     getAllHotels: build.query({
       query: () => 'hotels',
-      // providesTags: (result,error,id) =>[{type:'Hotel',id:'LIST'}],
-    }),
+     }),
     getHotelsBySearch: build.query({
       query: (search) => `hotels/search?query=${search}`,
-      // providesTags: (result,error,id) =>[{type:'Hotel',id:`SEARCH-${search}`}],
-
-    }),
+      }),
     getHotelById: build.query({
       query: (id) => `hotels/${id}`,
-      // providesTags: (result,error,id) =>[{type:'Hotel',id}],
     }),
     createHotel: build.mutation({
       query: (hotel) => ({
@@ -43,8 +39,27 @@ export const api = createApi({
         method: 'POST',
         body: hotel,
       }),
-      // invalidatesTags:(result,error,id)=>[{type:'Hotel',id:'LIST'}],
     }),
+    createBooking: build.mutation({
+      query: (booking) => ({
+        url: 'bookings',
+        method: 'POST',
+        body: booking,
+      }),
+    }),
+    getBookingbyId: build.query({
+      query: (bookingId) => `bookings/${bookingId}`,
+    }),
+    createCheckoutSession: build.mutation({
+      query:(payload) => ({
+        url: 'payments/create-checkout-session',
+        method: 'POST',
+        body: payload,
+      }),
+    }),
+    getCheckoutSessionStatus: build.query({
+      query: (sessionId) => `payments/checkout-session?sessionId=${sessionId}`,
+    }),    
     addLocation: build.mutation({
       query: (location) => ({
         url: 'locations',
@@ -53,7 +68,6 @@ export const api = createApi({
           name: location.name,
         },
       }),
-      // invalidatesTags:(result,error,id)=>[{type:'Location',id:'LIST'}],
     }),
     addReview: build.mutation({
       query: (review) => ({
@@ -61,12 +75,10 @@ export const api = createApi({
         method: 'POST',
         body: review
       }),
-    //   invalidatesTags:(result,error,id)=>[{type:'Hotel',id:review.hotelId}],
     }),
 
     getAllLocations: build.query({
       query: () => 'locations',
-      // providesTags: (result,error,id) =>[{type:'Location',id:'LIST'}],
     }),
     
   }),
@@ -74,4 +86,4 @@ export const api = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllHotelsQuery,useGetHotelByIdQuery,useGetHotelsBySearchQuery,useCreateHotelMutation,useAddLocationMutation, useGetAllLocationsQuery,useAddReviewMutation } = api
+export const { useGetAllHotelsQuery,useGetHotelByIdQuery,useGetHotelsBySearchQuery,useCreateHotelMutation,useAddLocationMutation, useGetAllLocationsQuery,useAddReviewMutation,useCreateBookingMutation,useGetBookingbyIdQuery,useCreateCheckoutSessionMutation,useGetCheckoutSessionStatusQuery } = api

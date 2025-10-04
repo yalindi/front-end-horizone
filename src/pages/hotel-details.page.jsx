@@ -8,14 +8,17 @@ import { Building2 } from "lucide-react";
 import { Tv } from "lucide-react";
 import { Coffee } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAddReviewMutation, useGetHotelByIdQuery } from "@/lib/api";
+import { useAddReviewMutation, useGetHotelByIdQuery,useCreateBookingMutation } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@clerk/clerk-react";
+import { BookingDialog } from "@/components/BookingDialog";
+import { check } from "zod";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
   const [addReview, { isLoading: isAddReviewLoading }] = useAddReviewMutation();
+  const [createBooking, { isLoading: isCreateBookingLoading }] = useCreateBookingMutation();
 
   const { user } = useUser();
 
@@ -27,6 +30,18 @@ const HotelDetailsPage = () => {
         rating: 5,
       }).unwrap();
     } catch (error) {}
+  };
+
+  const handleBook = async (bookingData) => {
+    try{
+      const result = await createBooking({
+        hotelId: _id,
+        checkIn: bookingData.checkIn,
+        checkOut: bookingData.checkOut,
+      }).unwrap();
+      Navigate(`/booking/payment?bookingId=${result._id}`);
+    }
+    catch(error){}
   };
 
   if (isLoading) {
@@ -160,12 +175,12 @@ const HotelDetailsPage = () => {
             >
               <PlusCircle className="w-4 h-4" /> Add Review
             </Button>
-            {/* <BookingDialog
+            <BookingDialog
               hotelName={hotel.name}
               hotelId={id}
               onSubmit={handleBook}
               isLoading={isCreateBookingLoading}
-            /> */}
+            />
           </div>
         </div>
       </div>
