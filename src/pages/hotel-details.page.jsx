@@ -19,7 +19,7 @@ const HotelDetailsPage = () => {
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
   const [addReview, { isLoading: isAddReviewLoading }] = useAddReviewMutation();
   const [createBooking, { isLoading: isCreateBookingLoading }] = useCreateBookingMutation();
-  const Navigate = useNavigate();
+  const navigate = useNavigate(); // ✅ Fix: lowercase "n" - not "Navigate"
 
   const { user } = useUser();
 
@@ -30,7 +30,9 @@ const HotelDetailsPage = () => {
         comment: "This is a test review",
         rating: 5,
       }).unwrap();
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed to add review:", error);
+    }
   };
 
   const handleBook = async (bookingData) => {
@@ -40,9 +42,11 @@ const HotelDetailsPage = () => {
         checkIn: bookingData.checkIn,
         checkOut: bookingData.checkOut,
       }).unwrap();
-      Navigate(`/booking/payment?bookingId=${result._id}`);
+      navigate(`/booking/payment?bookingId=${result._id}`); // ✅ Fix: lowercase "n" - not "Navigate"
     }
-    catch(error){}
+    catch(error){
+      console.error("Failed to create booking:", error);
+    }
   };
 
   if (isLoading) {
