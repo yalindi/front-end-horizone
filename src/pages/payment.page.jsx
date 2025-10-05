@@ -1,23 +1,12 @@
 import CheckoutForm from "@/components/CheckoutForm";
 import { useSearchParams } from "react-router";
 import { useGetBookingbyIdQuery } from "@/lib/api";
-import { useEffect } from "react";
 
 const PaymentPage = () => {
   const [searchParams] = useSearchParams();
   const bookingId = searchParams.get('bookingId');
   const { data: booking, isLoading: isBookingLoading, error } = useGetBookingbyIdQuery(bookingId);
 
-  useEffect(() => {
-    console.log('PaymentPage Debug:', {
-      bookingId,
-      booking,
-      isLoading: isBookingLoading,
-      error,
-      stripeKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ? 'Present' : 'Missing',
-      backendUrl: import.meta.env.VITE_BACKEND_URL
-    });
-  }, [bookingId, booking, isBookingLoading, error]);
 
   if (isBookingLoading) {
     return (
