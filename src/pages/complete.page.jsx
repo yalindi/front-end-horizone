@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useGetCheckoutSessionStatusQuery } from "@/lib/api";
 import { Link, useSearchParams, Navigate } from "react-router";
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 
 function CompletePage() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
 
-  const { data, isLoading, isError } =
-    useGetCheckoutSessionStatusQuery(sessionId);
+  const { data, isLoading, isError } = useGetCheckoutSessionStatusQuery(sessionId);
 
   if (isLoading) {
     return (
@@ -19,6 +18,8 @@ function CompletePage() {
   }
 
   if (isError) {
+    console.log('Error data:', data); // Check what data looks like during errors
+    console.log('BookingId from data:', data?.bookingId);
     return (
       <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md text-center">
         <h2 className="text-2xl font-bold mb-4 text-red-600">
@@ -42,13 +43,16 @@ function CompletePage() {
   }
 
   if (data?.status === "complete") {
-    const checkInDate = new Date(data.booking.checkIn);
-    const checkOutDate = new Date(data.booking.checkOut);
-    const formattedCheckIn = format(checkInDate, "MMM dd, yyyy");
-    const formattedCheckOut = format(checkOutDate, "MMM dd, yyyy");
-    const nights = Math.round(
-      (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)
-    );
+    const checkInDate = data.booking?.checkIn ? parseISO(data.booking.checkIn) : new Date();
+    const checkOutDate = data.booking?.checkOut ? parseISO(data.booking.checkOut) : new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    const formattedCheckIn = isValid(checkInDate) ? format(checkInDate, "MMM dd, yyyy") : "Invalid date";
+    const formattedCheckOut = isValid(checkOutDate) ? format(checkOutDate, "MMM dd, yyyy") : "Invalid date";
+
+    // ✅ Fix: Add validation for nights calculation
+    const nights = isValid(checkInDate) && isValid(checkOutDate)
+      ? Math.round((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24))
+      : 1;
 
     return (
       <section
@@ -80,18 +84,18 @@ function CompletePage() {
         </p>
         <div className="mt-6 border rounded-lg overflow-hidden">
           <div className="relative h-48">
-            {data.hotel.image && (
+            {data.hotel?.image && ( // ✅ Add optional chaining
               <img
                 src={data.hotel.image}
-                alt={data.hotel.name}
+                alt={data.hotel?.name || 'Hotel'} // ✅ Add fallback
                 className="w-full h-full object-cover"
               />
             )}
           </div>
           <div className="p-4 bg-gray-50">
-            <h3 className="text-xl font-bold">{data.hotel.name}</h3>
-            <p className="text-gray-600 mb-2">{data.hotel.location}</p>
-            {data.hotel.rating && (
+            <h3 className="text-xl font-bold">{data.hotel?.name || 'Hotel'}</h3> {/* ✅ Add fallback */}
+            <p className="text-gray-600 mb-2">{data.hotel?.location || 'Location not available'}</p> {/* ✅ Add fallback */}
+            {data.hotel?.rating && ( // ✅ Add optional chaining
               <div className="flex items-center mb-2">
                 <span className="text-yellow-500 mr-1">★</span>
                 <span>{data.hotel.rating}</span>
@@ -111,11 +115,11 @@ function CompletePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-600 text-sm">Booking ID</p>
-                <p className="font-medium">{data.booking._id || data.bookingId}</p>
+                <p className="font-medium">{data.booking?._id || data.bookingId || 'N/A'}</p> {/* ✅ Add fallback */}
               </div>
               <div>
                 <p className="text-gray-600 text-sm">Room Number</p>
-                <p className="font-medium">{data.booking.roomNumber}</p>
+                <p className="font-medium">{data.booking?.roomNumber || 'N/A'}</p> {/* ✅ Add fallback */}
               </div>
               <div>
                 <p className="text-gray-600 text-sm">Check-in Date</p>
@@ -133,12 +137,12 @@ function CompletePage() {
               </div>
               <div>
                 <p className="text-gray-600 text-sm">Price</p>
-                <p className="font-medium">${data.hotel.price} per night</p>
+                <p className="font-medium">${data.hotel?.price || 'N/A'} per night</p> {/* ✅ Add fallback */}
               </div>
               <div>
                 <p className="text-gray-600 text-sm">Payment Method</p>
                 <p className="font-medium capitalize">
-                  {data.booking.paymentMethod
+                  {data.booking?.paymentMethod // ✅ Add optional chaining
                     ? data.booking.paymentMethod.replace("_", " ").toLowerCase()
                     : "card"}
                 </p>
@@ -146,7 +150,7 @@ function CompletePage() {
               <div>
                 <p className="text-gray-600 text-sm">Payment Status</p>
                 <p className="font-medium text-green-600">
-                  {data.booking.paymentStatus}
+                  {data.booking?.paymentStatus || 'PENDING'} {/* ✅ Add fallback */}
                 </p>
               </div>
             </div>
@@ -186,4 +190,3 @@ function CompletePage() {
 }
 
 export default CompletePage;
-

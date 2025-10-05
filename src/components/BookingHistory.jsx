@@ -3,7 +3,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, MapPin, CreditCard, CheckCircle, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
+import { format,isValid,parseISO } from "date-fns";
 import {useState} from "react"
 
 export function BookingHistory() {
@@ -13,10 +13,13 @@ export function BookingHistory() {
   const [dateFilter,setDateFilter]=useState('')
 
   const filterBooking=bookings?.filter((booking)=>{
-    const matchState=statusFilter=="all"|| booking.paymentStatus===statusFilter;
-    const matchDate=!dateFilter||format(new Date(booking.checkIn),"yyyy-MM-dd")===dateFilter;
-    return matchDate && matchState
-  }) || [];
+  const matchState=statusFilter=="all"|| booking.paymentStatus===statusFilter;
+
+  const bookingCheckIn = booking.checkIn ? parseISO(booking.checkIn) : new Date();
+  const matchDate=!dateFilter||(isValid(bookingCheckIn)&&format(bookingCheckIn,"yyyy-MM-dd")===dateFilter);
+  
+  return matchDate && matchState
+}) || [];
 
   if (isLoading) {
     return (
@@ -84,8 +87,9 @@ function BookingCard({ booking }) {
   }
 
   const hotel = booking.hotelId;
-  const checkIn = new Date(booking.checkIn);
-  const checkOut = new Date(booking.checkOut);
+  const checkIn = booking.checkIn ? parseISO(booking.checkIn) : new Date();
+  const checkOut = booking.checkOut ? parseISO(booking.checkOut) : new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const createdAt = booking.createdAt ? parseISO(booking.createdAt) : new Date();
   const nights = Math.round((checkOut - checkIn) / (1000 * 60 * 60 * 24));
   const totalAmount = hotel.price * nights;
 
@@ -130,7 +134,7 @@ function BookingCard({ booking }) {
             
             <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
-              {format(checkIn, "MMM dd, yyyy")} - {format(checkOut, "MMM dd, yyyy")}
+              {isValid(checkIn) ? format(checkIn, "MMM dd, yyyy") : "Invalid date"} - {isValid(checkOut) ? format(checkOut, "MMM dd, yyyy") : "Invalid date"}
               <span className="mx-2">•</span>
               {nights} {nights === 1 ? "night" : "nights"}
             </div>
@@ -145,7 +149,7 @@ function BookingCard({ booking }) {
           
           {/* ✅ ADD BOOKING DATE/TIME */}
           <div className="mt-2 text-xs text-gray-500">
-            Booked on {format(new Date(booking.createdAt), "MMM dd, yyyy 'at' h:mm a")}
+            Booked on {isValid(createdAt) ? format(createdAt, "MMM dd, yyyy 'at' h:mm a") : "Date not available"}
           </div>
         </div>
       </div>
