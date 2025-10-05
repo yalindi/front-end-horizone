@@ -3,7 +3,7 @@ import {EmbeddedCheckout,EmbeddedCheckoutProvider} from '@stripe/react-stripe-js
 import {useAuth} from '@clerk/clerk-react'
 import { useCallback, useState, useEffect } from 'react'
 
-const STRIPE_PUBLISHABLE_KEY = import.meta.env.STRIPE_PUBLISHABLE_KEY
+const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 // Load Stripe outside component to avoid multiple loads
