@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { MapPin, Star, Wifi, Coffee, Car } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 
 const HotelList = ({ hotels }) => {
   return (
