@@ -162,7 +162,6 @@
 
 // export default FilterSidebar;
 
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -192,7 +191,6 @@ const FilterSidebar = ({
         setSelectedLocations(selectedLocation ? selectedLocation.split(',') : []);
     }, [minPrice, maxPrice, selectedLocation]);
 
-    // Use getAllLocations data structure (with _id and name)
     const filteredLocations = locations.filter(location =>
         location.name.toLowerCase().includes(locationSearch.toLowerCase())
     );
@@ -212,23 +210,38 @@ const FilterSidebar = ({
         return () => clearTimeout(timeoutId);
     };
 
+    // FIXED: Add proper debugging
     const handleLocationToggle = (locationName) => {
+        console.log('Location clicked:', locationName);
+        
         const newLocations = selectedLocations.includes(locationName)
             ? selectedLocations.filter(name => name !== locationName)
             : [...selectedLocations, locationName];
 
+        console.log('New locations array:', newLocations);
+        
         setSelectedLocations(newLocations);
         
+        // FIXED: Make sure this is being called
+        const locationValue = newLocations.length > 0 ? newLocations.join(',') : '';
+        console.log('Calling onFilterChange with location:', locationValue);
+        
         onFilterChange({
-            location: newLocations.length > 0 ? newLocations.join(',') : ''
+            location: locationValue
         });
     };
 
     const removeLocation = (locationName) => {
+        console.log('Removing location:', locationName);
+        
         const newLocations = selectedLocations.filter(name => name !== locationName);
         setSelectedLocations(newLocations);
+        
+        const locationValue = newLocations.length > 0 ? newLocations.join(',') : '';
+        console.log('Calling onFilterChange after removal:', locationValue);
+        
         onFilterChange({
-            location: newLocations.length > 0 ? newLocations.join(',') : ''
+            location: locationValue
         });
     };
 
@@ -262,17 +275,19 @@ const FilterSidebar = ({
                 </div>
 
                 {/* Selected Location Chips */}
-                <div className="flex flex-wrap gap-2 mb-3">
-                    {selectedLocations.map(locationName => (
-                        <Badge key={locationName} variant="secondary" className="flex items-center gap-1">
-                            {locationName}
-                            <X
-                                className="h-3 w-3 cursor-pointer"
-                                onClick={() => removeLocation(locationName)}
-                            />
-                        </Badge>
-                    ))}
-                </div>
+                {selectedLocations.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                        {selectedLocations.map(locationName => (
+                            <Badge key={locationName} variant="secondary" className="flex items-center gap-1">
+                                {locationName}
+                                <X
+                                    className="h-3 w-3 cursor-pointer"
+                                    onClick={() => removeLocation(locationName)}
+                                />
+                            </Badge>
+                        ))}
+                    </div>
+                )}
 
                 {/* Location List */}
                 <div className="space-y-2 max-h-60 overflow-y-auto">
