@@ -18,13 +18,13 @@ const FilterSidebar = ({
         max: maxPrice || ''
     });
     const [selectedLocations, setSelectedLocations] = useState(
-        selectedLocation ? [selectedLocation] : []
+        selectedLocation ? selectedLocation.split(',') : []
     );
     const [locationSearch, setLocationSearch] = useState('');
 
     useEffect(() => {
         setPriceRange({ min: minPrice || '', max: maxPrice || '' });
-        setSelectedLocations(selectedLocation ? [selectedLocation] : []);
+        setSelectedLocations(selectedLocation ? selectedLocation.split(',') : []);
     }, [minPrice, maxPrice, selectedLocation]);
 
     const filteredLocations = locations.filter(location =>
@@ -46,29 +46,20 @@ const FilterSidebar = ({
         return () => clearTimeout(timeoutId);
     };
 
-    const handleLocationToggle = (locationId) => {
-        // Find the location name from the ID
-        const location = locations.find(loc => loc._id === locationId);
-
-        const newLocations = selectedLocations.includes(locationId)
-            ? selectedLocations.filter(id => id !== locationId)
-            : [...selectedLocations, locationId];
+    const handleLocationToggle = (locationName) => {
+        const newLocations = selectedLocations.includes(locationName)
+            ? selectedLocations.filter(name => name !== locationName)
+            : [...selectedLocations, locationName];
 
         setSelectedLocations(newLocations);
-
-        // Convert IDs to names for the backend
-        const locationNames = newLocations.map(id => {
-            const loc = locations.find(l => l._id === id);
-            return loc ? loc.name : '';
-        }).filter(name => name);
-
+        
         onFilterChange({
-            location: locationNames.length > 0 ? locationNames.join(',') : ''
+            location: newLocations.length > 0 ? newLocations.join(',') : ''
         });
     };
 
-    const removeLocation = (locationId) => {
-        const newLocations = selectedLocations.filter(id => id !== locationId);
+    const removeLocation = (locationName) => {
+        const newLocations = selectedLocations.filter(name => name !== locationName);
         setSelectedLocations(newLocations);
         onFilterChange({
             location: newLocations.length > 0 ? newLocations.join(',') : ''
@@ -106,33 +97,30 @@ const FilterSidebar = ({
 
                 {/* Selected Location Chips */}
                 <div className="flex flex-wrap gap-2 mb-3">
-                    {selectedLocations.map(locationId => {
-                        const location = locations.find(l => l._id === locationId);
-                        return location ? (
-                            <Badge key={locationId} variant="secondary" className="flex items-center gap-1">
-                                {location.name}
-                                <X
-                                    className="h-3 w-3 cursor-pointer"
-                                    onClick={() => removeLocation(locationId)}
-                                />
-                            </Badge>
-                        ) : null;
-                    })}
+                    {selectedLocations.map(locationName => (
+                        <Badge key={locationName} variant="secondary" className="flex items-center gap-1">
+                            {locationName}
+                            <X
+                                className="h-3 w-3 cursor-pointer"
+                                onClick={() => removeLocation(locationName)}
+                            />
+                        </Badge>
+                    ))}
                 </div>
 
                 {/* Location List */}
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                     {filteredLocations.map(location => (
-                        <div key={location._id} className="flex items-center">
+                        <div key={location.name} className="flex items-center">
                             <input
                                 type="checkbox"
-                                id={`location-${location._id}`}
-                                checked={selectedLocations.includes(location._id)}
-                                onChange={() => handleLocationToggle(location._id)}
+                                id={`location-${location.name}`}
+                                checked={selectedLocations.includes(location.name)}
+                                onChange={() => handleLocationToggle(location.name)}
                                 className="rounded border-gray-300 text-primary focus:ring-primary"
                             />
                             <label
-                                htmlFor={`location-${location._id}`}
+                                htmlFor={`location-${location.name}`}
                                 className="ml-2 text-sm text-gray-700 cursor-pointer"
                             >
                                 {location.name}
