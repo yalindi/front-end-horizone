@@ -33,6 +33,36 @@ export const api = createApi({
     getHotelById: build.query({
       query: (id) => `hotels/${id}`,
     }),
+    getHotels: build.query({
+      query: (filters={})=>{
+        const{
+          page=1,
+          limit=12,
+          location,
+          minPrice,
+          maxPrice,
+          sortBy='featured',
+          search
+        }=filters
+        const params=new URLSearchParams();
+
+        if(page) params.append('page',page);
+        if (limit) params.append('limit', limit);
+        if (location) params.append('location', location);
+        if (minPrice) params.append('minPrice', minPrice);
+        if (maxPrice) params.append('maxPrice', maxPrice);
+        if (sortBy) params.append('sortBy', sortBy);
+        if (search) params.append('search', search);
+
+        return `hotels?${params.toString()}`;
+      }
+    }),
+
+    getHotelLocations: build.query({
+      query:()=>'hotels/locations',
+
+    }),
+
     createHotel: build.mutation({
       query: (hotel) => ({
         url: 'hotels',
@@ -89,4 +119,4 @@ export const api = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllHotelsQuery,useGetHotelByIdQuery,useGetHotelsBySearchQuery,useCreateHotelMutation,useAddLocationMutation, useGetAllLocationsQuery,useAddReviewMutation,useCreateBookingMutation,useGetBookingbyIdQuery,useCreateCheckoutSessionMutation,useGetCheckoutSessionStatusQuery,useGetBookingsbyUserIdQuery} = api
+export const { useGetAllHotelsQuery,useGetHotelByIdQuery,useGetHotelsBySearchQuery,useCreateHotelMutation,useAddLocationMutation, useGetAllLocationsQuery,useAddReviewMutation,useCreateBookingMutation,useGetBookingbyIdQuery,useCreateCheckoutSessionMutation,useGetCheckoutSessionStatusQuery,useGetBookingsbyUserIdQuery,useGetHotelLocationsQuery,useGetHotelsQuery} = api
