@@ -36,13 +36,8 @@ const HotelsPage = () => {
   };
 
   const { data: hotelsData, isLoading, isError, refetch } = useGetHotelsQuery(queryParams);
-  const { data: locationsData } = useGetHotelLocationsQuery();
-  useEffect(() => {
-    if (locationsData) {
-      console.log('Hotel locations data:', locationsData);
-      console.log('Location names:', locationsData.map(loc => loc.name));
-    }
-  }, [locationsData]);
+  const { data: locationsData } = useGetAllLocationsQuery();
+
   const hotels = hotelsData?.hotels || [];
   const totalPages = hotelsData?.totalPages || 1;
   const totalHotels = hotelsData?.totalCount || 0;
