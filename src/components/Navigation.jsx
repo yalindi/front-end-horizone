@@ -1,113 +1,366 @@
+// import { Button } from "@/components/ui/button";
+// import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
+// import { Home, Menu, Globe, X } from "lucide-react";
+// import { Link } from "react-router";
+// import { useState, useRef, useEffect } from "react";
+
+
+// function Navigation() {
+//   const { user } = useUser();
+//   const [isMenuOpen, setIsMenuOpen] = useState(false);
+//   const menuRef = useRef(null);
+//   const buttonRef = useRef(null);
+
+//   //Close menu when clicking outside
+//     useEffect(() => {
+//       function handleClickOutside(event) {
+//         if (
+//           isMenuOpen &&
+//           menuRef.current &&
+//           !menuRef.current.contains(event.target) &&
+//           buttonRef.current &&
+//           !buttonRef.current.contains(event.target)
+//         ) {
+//           setIsMenuOpen(false);
+//         }
+//       }
+
+//       document.addEventListener("mousedown", handleClickOutside);
+//       return () => {
+//         document.removeEventListener("mousedown", handleClickOutside);
+//       };
+//     }, [isMenuOpen]);
+
+//   // Close menu when pressing escape key
+//     useEffect(() => {
+//       function handleEscKey(event) {
+//         if (isMenuOpen && event.key === "Escape") {
+//           setIsMenuOpen(false);
+//         }
+//       }
+
+//       document.addEventListener("keydown", handleEscKey);
+//       return () => {
+//         document.removeEventListener("keydown", handleEscKey);
+//       };
+//     }, [isMenuOpen]);
+
+//   return (
+//     <nav className="z-50 bg-black/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative">
+//       <div className="flex items-center space-x-8">
+//         <Link to="/" className="text-xl font-bold">
+//           Horizone
+//         </Link>
+//         <div className="hidden md:flex space-x-6">
+//           <Link to={`/`} className="transition-colors text-sm">
+//           <Home className="inline h-4 w-4 mr-1 mb-0.5" />
+//             Home
+//           </Link>
+
+//           {user?.publicMetadata?.role === "admin" && (
+//             <a href={`/hotels/create`} className="transition-colors text-sm">
+//               Create Hotel
+//             </a>
+//           )}
+//         </div>
+//       </div>
+
+//       <div className="flex items-center space-x-4">
+//         <Button variant="ghost" size="sm" className="text-xs hidden md:flex">
+//           <Globe className="h-4 w-4 mr-2" />
+//           EN
+//         </Button>
+//         <SignedOut>
+//           <Button
+//             variant="ghost"
+//             size="sm"
+//             asChild
+//             className="text-xs hidden md:flex"
+//           >
+//             <Link to="/sign-in">Log In</Link>
+//           </Button>
+//           <Button
+//             size="sm"
+//             asChild
+//             className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex"
+//           >
+//             <Link to="/sign-up">Sign Up</Link>
+//           </Button>
+//         </SignedOut>
+//         <Button
+//           variant="ghost"
+//           size="sm"
+//           asChild
+//           className="text-xs hidden md:flex"
+//         >
+//           <Link to="/sign-in">Log In</Link>
+//         </Button>
+//         <Button
+//           size="sm"
+//           asChild
+//           className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex"
+//         >
+//           <Link to="/sign-up">Sign Up</Link>
+//         </Button>
+//         <SignedIn>
+//           <UserButton />
+//           <Button
+//             size="sm"
+//             asChild
+//             className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex"
+//           >
+//             <Link to="/account">My Account</Link>
+//           </Button>
+//         </SignedIn>
+
+//         {/* Mobile Menu Button */}
+//         <div className="relative md:hidden">
+//           <Button
+//             // ref={buttonRef}
+//             variant="ghost"
+//             size="icon"
+//             className="relative z-20"
+//             onClick={() => setIsMenuOpen(!isMenuOpen)}
+//             aria-expanded={isMenuOpen}
+//           >
+//             {isMenuOpen ? (
+//               <X className="h-5 w-5" />
+//             ) : (
+//               <Menu className="h-5 w-5" />
+//             )}
+//             <span className="sr-only">
+//               {isMenuOpen ? "Close menu" : "Open menu"}
+//             </span>
+//           </Button>
+
+//           {/* Dropdown Menu */}
+//           {isMenuOpen && (
+//             <div
+//               ref={menuRef}
+//               className="absolute right-0 mt-2 w-56 rounded-xl bg-black border border-gray-800 shadow-lg py-2 px-3 animate-in fade-in slide-in-from-top-5 duration-200 z-50"
+//               style={{ top: "calc(100% + 8px)" }}
+//             >
+//               <div className="flex flex-col space-y-3 py-2">
+//                 <Link
+//                   to="/"
+//                   className="text-sm font-medium hover:text-gray-300 transition-colors"
+//                   onClick={() => setIsMenuOpen(false)}
+//                 >
+//                   Home
+//                 </Link>
+//                 {user?.publicMetadata?.role === "admin" && (
+//                   <a
+//                     href="/hotels/create"
+//                     className="text-sm font-medium hover:text-gray-300 transition-colors"
+//                     onClick={() => setIsMenuOpen(false)}
+//                   >
+//                     Create Hotel
+//                   </a>
+//                 )}
+//                 <div className="h-px bg-white/20 my-1"></div>
+//                 <Button
+//                   variant="ghost"
+//                   size="sm"
+//                   className="justify-start h-8 px-2"
+//                 >
+//                   <Globe className="h-4 w-4 mr-2" />
+//                   EN
+//                 </Button>
+//                 <SignedOut>
+//                   <a
+//                     href="/sign-in"
+//                     className="text-sm font-medium hover:text-gray-300 transition-colors"
+//                     onClick={() => setIsMenuOpen(false)}
+//                   >
+//                     Log In
+//                   </a>
+//                   <Button
+//                     size="sm"
+//                     className="bg-white text-black hover:bg-gray-200 w-full mt-2"
+//                     asChild
+//                     onClick={() => setIsMenuOpen(false)}
+//                   >
+//                     <Link to="/sign-up">Sign Up</Link>
+//                   </Button>
+//                 </SignedOut>
+//                 <Link to="/sign-in"
+//                   className="text-sm font-medium hover:text-gray-300 transition-colors"
+//                   onClick={() => setIsMenuOpen(false)}
+//                 >
+//                   Log In
+//                 </Link>
+//                 <Button
+//                   size="sm"
+//                   className="bg-white text-black hover:bg-gray-200 w-full mt-2"
+//                   asChild
+//                   onClick={() => setIsMenuOpen(false)}
+//                 >
+//                   <Link to="/sign-up">Sign Up</Link>
+//                 </Button>
+//                 <SignedIn>
+//                   <Button
+//                     size="sm"
+//                     className="bg-white text-black hover:bg-gray-200 w-full mt-2"
+//                     asChild
+//                     onClick={() => setIsMenuOpen(false)}
+//                   >
+//                     <Link to="/account">My Account</Link>
+//                   </Button>
+//                 </SignedIn>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// }
+
+// export default Navigation;
+
+
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 import { Home, Menu, Globe, X } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useState, useRef, useEffect } from "react";
 
-
 function Navigation() {
-  //   const { user } = useUser();
+  const { user } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  //   const menuRef = useRef(null);
-    // const buttonRef = useRef(null);
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
+  const location = useLocation();
 
   // Close menu when clicking outside
-  //   useEffect(() => {
-  //     function handleClickOutside(event) {
-  //       if (
-  //         isMenuOpen &&
-  //         menuRef.current &&
-  //         !menuRef.current.contains(event.target) &&
-  //         buttonRef.current &&
-  //         !buttonRef.current.contains(event.target)
-  //       ) {
-  //         setIsMenuOpen(false);
-  //       }
-  //     }
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        isMenuOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsMenuOpen(false);
+      }
+    }
 
-  //     document.addEventListener("mousedown", handleClickOutside);
-  //     return () => {
-  //       document.removeEventListener("mousedown", handleClickOutside);
-  //     };
-  //   }, [isMenuOpen]);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   // Close menu when pressing escape key
-  //   useEffect(() => {
-  //     function handleEscKey(event) {
-  //       if (isMenuOpen && event.key === "Escape") {
-  //         setIsMenuOpen(false);
-  //       }
-  //     }
+  useEffect(() => {
+    function handleEscKey(event) {
+      if (isMenuOpen && event.key === "Escape") {
+        setIsMenuOpen(false);
+        buttonRef.current?.focus(); // Return focus to menu button
+      }
+    }
 
-  //     document.addEventListener("keydown", handleEscKey);
-  //     return () => {
-  //       document.removeEventListener("keydown", handleEscKey);
-  //     };
-  //   }, [isMenuOpen]);
+    document.addEventListener("keydown", handleEscKey);
+    return () => {
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, [isMenuOpen]);
+
+  // Focus management for accessibility
+  useEffect(() => {
+    if (isMenuOpen && menuRef.current) {
+      const firstFocusableElement = menuRef.current.querySelector('a, button');
+      firstFocusableElement?.focus();
+    }
+  }, [isMenuOpen]);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  const handleMenuKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      closeMenu();
+      buttonRef.current?.focus();
+    }
+  };
 
   return (
-    <nav className="z-50 bg-black/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative">
+    <nav 
+      className="z-50 bg-black/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative"
+      aria-label="Main navigation"
+    >
       <div className="flex items-center space-x-8">
-        <Link to="/" className="text-xl font-bold">
+        <Link 
+          to="/" 
+          className="text-xl font-bold focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded"
+        >
           Horizone
         </Link>
-        <div className="hidden md:flex space-x-6">
-          <Link to={`/`} className="transition-colors text-sm">
-          <Home className="inline h-4 w-4 mr-1 mb-0.5" />
+        <div className="hidden md:flex space-x-6" role="menubar">
+          <Link 
+            to="/" 
+            className="transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+            role="menuitem"
+            aria-current={location.pathname === '/' ? 'page' : undefined}
+          >
+            <Home className="inline h-4 w-4 mr-1 mb-0.5" aria-hidden="true" />
             Home
           </Link>
 
-          {/* {user?.publicMetadata?.role === "admin" && (
-            <a href={`/hotels/create`} className="transition-colors text-sm">
+          {user?.publicMetadata?.role === "admin" && (
+            <Link 
+              to="/hotels/create"
+              className="transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+              role="menuitem"
+            >
               Create Hotel
-            </a>
-          )} */}
+            </Link>
+          )}
         </div>
       </div>
 
       <div className="flex items-center space-x-4">
-        <Button variant="ghost" size="sm" className="text-xs hidden md:flex">
-          <Globe className="h-4 w-4 mr-2" />
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="text-xs hidden md:flex focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+          aria-label="Change language"
+        >
+          <Globe className="h-4 w-4 mr-2" aria-hidden="true" />
           EN
         </Button>
+        
+        {/* Fixed: Removed duplicate buttons outside SignedOut/SignedIn */}
         <SignedOut>
           <Button
             variant="ghost"
             size="sm"
             asChild
-            className="text-xs hidden md:flex"
+            className="text-xs hidden md:flex focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
           >
             <Link to="/sign-in">Log In</Link>
           </Button>
           <Button
             size="sm"
             asChild
-            className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex"
+            className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black"
           >
             <Link to="/sign-up">Sign Up</Link>
           </Button>
         </SignedOut>
-        {/* <Button
-          variant="ghost"
-          size="sm"
-          asChild
-          className="text-xs hidden md:flex"
-        >
-          <Link to="/sign-in">Log In</Link>
-        </Button>
-        <Button
-          size="sm"
-          asChild
-          className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex"
-        >
-          <Link to="/sign-up">Sign Up</Link>
-        </Button> */}
+        
         <SignedIn>
           <UserButton />
           <Button
             size="sm"
             asChild
-            className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex"
+            className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black"
           >
             <Link to="/account">My Account</Link>
           </Button>
@@ -116,97 +369,100 @@ function Navigation() {
         {/* Mobile Menu Button */}
         <div className="relative md:hidden">
           <Button
-            // ref={buttonRef}
+            ref={buttonRef}
             variant="ghost"
             size="icon"
-            className="relative z-20"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="relative z-20 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded-full"
+            onClick={toggleMenu}
             aria-expanded={isMenuOpen}
+            aria-haspopup="true"
+            aria-controls="mobile-menu"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5" aria-hidden="true" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5" aria-hidden="true" />
             )}
-            <span className="sr-only">
-              {isMenuOpen ? "Close menu" : "Open menu"}
-            </span>
           </Button>
 
           {/* Dropdown Menu */}
           {isMenuOpen && (
             <div
               ref={menuRef}
+              id="mobile-menu"
               className="absolute right-0 mt-2 w-56 rounded-xl bg-black border border-gray-800 shadow-lg py-2 px-3 animate-in fade-in slide-in-from-top-5 duration-200 z-50"
               style={{ top: "calc(100% + 8px)" }}
+              role="menu"
+              aria-orientation="vertical"
+              onKeyDown={handleMenuKeyDown}
             >
               <div className="flex flex-col space-y-3 py-2">
                 <Link
                   to="/"
-                  className="text-sm font-medium hover:text-gray-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
+                  className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                  role="menuitem"
+                  onClick={closeMenu}
+                  aria-current={location.pathname === '/' ? 'page' : undefined}
                 >
                   Home
                 </Link>
+                
                 {user?.publicMetadata?.role === "admin" && (
-                  <a
-                    href="/hotels/create"
-                    className="text-sm font-medium hover:text-gray-300 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
+                  <Link
+                    to="/hotels/create"
+                    className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                    role="menuitem"
+                    onClick={closeMenu}
                   >
                     Create Hotel
-                  </a>
+                  </Link>
                 )}
-                <div className="h-px bg-white/20 my-1"></div>
+                
+                <div className="h-px bg-white/20 my-1" aria-hidden="true"></div>
+                
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="justify-start h-8 px-2"
+                  className="justify-start h-8 px-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+                  role="menuitem"
                 >
-                  <Globe className="h-4 w-4 mr-2" />
+                  <Globe className="h-4 w-4 mr-2" aria-hidden="true" />
                   EN
                 </Button>
-                {/* <SignedOut>
-                  <a
-                    href="/sign-in"
-                    className="text-sm font-medium hover:text-gray-300 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
+
+                {/* Fixed: Proper SignedOut/SignedIn sections for mobile */}
+                <SignedOut>
+                  <Link
+                    to="/sign-in"
+                    className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                    role="menuitem"
+                    onClick={closeMenu}
                   >
                     Log In
-                  </a>
+                  </Link>
                   <Button
                     size="sm"
-                    className="bg-white text-black hover:bg-gray-200 w-full mt-2"
+                    className="bg-white text-black hover:bg-gray-200 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black"
                     asChild
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={closeMenu}
+                    role="menuitem"
                   >
                     <Link to="/sign-up">Sign Up</Link>
                   </Button>
-                </SignedOut> */}
-                <Link to="/sign-in"
-                  className="text-sm font-medium hover:text-gray-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Log In
-                </Link>
-                <Button
-                  size="sm"
-                  className="bg-white text-black hover:bg-gray-200 w-full mt-2"
-                  asChild
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Link to="/sign-up">Sign Up</Link>
-                </Button>
-                {/* <SignedIn>
+                </SignedOut>
+
+                <SignedIn>
                   <Button
                     size="sm"
-                    className="bg-white text-black hover:bg-gray-200 w-full mt-2"
+                    className="bg-white text-black hover:bg-gray-200 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black"
                     asChild
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={closeMenu}
+                    role="menuitem"
                   >
                     <Link to="/account">My Account</Link>
                   </Button>
-                </SignedIn> */}
+                </SignedIn>
               </div>
             </div>
           )}
