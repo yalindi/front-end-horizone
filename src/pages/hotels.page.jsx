@@ -9,7 +9,7 @@ import Pagination from '@/components/Pagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Hotel, Filter } from 'lucide-react';
-import { useGetHotelsQuery, useGetHotelLocationsQuery } from '@/lib/api'; // UPDATED: Changed to useGetHotelLocationsQuery
+import { useGetHotelsQuery, useGetAllLocationsQuery } from '@/lib/api'; // UPDATED: Changed to useGetHotelLocationsQuery
 
 const HotelsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,7 +36,7 @@ const HotelsPage = () => {
   };
 
   const { data: hotelsData, isLoading, isError, refetch } = useGetHotelsQuery(queryParams);
-  const { data: locationsData } = useGetHotelLocationsQuery(); // UPDATED: Changed hook name
+  const { data: locationsData } = useGetAllLocationsQuery(); // UPDATED: Changed hook name
 
   const hotels = hotelsData?.hotels || [];
   const totalPages = hotelsData?.totalPages || 1;
