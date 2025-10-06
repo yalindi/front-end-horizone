@@ -1,5 +1,5 @@
 import HotelCard from "@/components/HotelCard";
-import { useGetAllHotelsQuery, useGetAllLocationsQuery } from "@/lib/api";
+import { useGetAllHotelsQuery, useGetHotelLocationsQuery } from "@/lib/api";
 import { useState } from "react";
 import { toast } from "sonner";
 import LocationTab from "./LocationTab";
@@ -20,7 +20,7 @@ function HotelListings() {
     isLoading: isLocationsLoading,
     isError: isLocationsError,
     error: locationsError,
-  } = useGetAllLocationsQuery();
+  } = useGetHotelLocationsQuery();
 
   const allLocations = locations
     ? [{ _id: 0, name: "All" }, ...locations]

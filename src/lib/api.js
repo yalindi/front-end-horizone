@@ -26,7 +26,10 @@ export const api = createApi({
   endpoints: (build) => ({
     getAllHotels: build.query({
       query: () => 'hotels',
-     }),
+      transformResponse:(response)=>{
+        return Array.isArray(response)? response: response.hotels
+      },
+    }),
     getHotelsBySearch: build.query({
       query: (search) => `hotels/search?query=${search}`,
       }),
