@@ -82,7 +82,7 @@ export default function AISearch() {
                         <Button
                             type="button"
                             onClick={handleClearSearch}
-                            className="absolute right-28 h-[80%] my-auto bg-transparent text-white rounded-full px-2 flex items-center gap-x-1 border-white border hover:bg-white/10 transition-colors"
+                            className="absolute right-28 h-[80%] my-auto bg-black text-white rounded-full px-2 flex items-center gap-x-2 border-white border hover:bg-white/10 transition-colors"
                             variant="ghost"
                             size="sm"
                         >
