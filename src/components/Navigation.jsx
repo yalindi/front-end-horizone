@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
-import { Home, Menu, Globe, X,Building2} from "lucide-react";
+import { Home, Menu, Globe, X, Building2 } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { useState, useRef, useEffect } from "react";
 
@@ -70,20 +70,20 @@ function Navigation() {
   };
 
   return (
-    <nav 
+    <nav
       className="z-50 bg-black/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative"
       aria-label="Main navigation"
     >
       <div className="flex items-center space-x-8">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="text-xl font-bold focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded"
         >
           Horizone
         </Link>
         <div className="hidden md:flex space-x-6" role="menubar">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
             role="menuitem"
             aria-current={location.pathname === '/' ? 'page' : undefined}
@@ -92,8 +92,8 @@ function Navigation() {
             Home
           </Link>
 
-          <Link 
-            to="/hotels" 
+          <Link
+            to="/hotels"
             className="transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
             role="menuitem"
             aria-current={location.pathname === '/hotels' ? 'page' : undefined}
@@ -103,7 +103,7 @@ function Navigation() {
           </Link>
 
           {user?.publicMetadata?.role === "admin" && (
-            <Link 
+            <Link
               to="/admin/create-hotel"
               className="transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
               role="menuitem"
@@ -115,17 +115,16 @@ function Navigation() {
       </div>
 
       <div className="flex items-center space-x-4">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="text-xs hidden md:flex focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
           aria-label="Change language"
         >
           <Globe className="h-4 w-4 mr-2" aria-hidden="true" />
           EN
         </Button>
-        
-        {/* Fixed: Removed duplicate buttons outside SignedOut/SignedIn */}
+
         <SignedOut>
           <Button
             variant="ghost"
@@ -143,7 +142,7 @@ function Navigation() {
             <Link to="/sign-up">Sign Up</Link>
           </Button>
         </SignedOut>
-        
+
         <SignedIn>
           <UserButton />
           <Button
@@ -189,7 +188,11 @@ function Navigation() {
               <div className="flex flex-col space-y-3 py-2">
                 <Link
                   to="/"
-                  className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                  // className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                  className={`text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1 ${location.pathname === '/'
+                    ? 'text-white bg-white/20'
+                    : 'hover:text-gray-300'
+                    }`}
                   role="menuitem"
                   onClick={closeMenu}
                   aria-current={location.pathname === '/' ? 'page' : undefined}
@@ -199,27 +202,35 @@ function Navigation() {
 
                 <Link
                   to="/hotels"
-                  className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                  // className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                  className={`text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1 ${location.pathname === '/hotels'
+                      ? 'text-white bg-white/20'
+                      : 'hover:text-gray-300'
+                    }`}
                   role="menuitem"
                   onClick={closeMenu}
                   aria-current={location.pathname === '/hotels' ? 'page' : undefined}
                 >
                   Hotels
                 </Link>
-                
+
                 {user?.publicMetadata?.role === "admin" && (
                   <Link
                     to="/admin/create-hotel"
-                    className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                    // className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
+                    className={`text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1 ${location.pathname === '/admin/create-hotel'
+                        ? 'text-white bg-white/20'
+                        : 'hover:text-gray-300'
+                      }`}
                     role="menuitem"
                     onClick={closeMenu}
                   >
                     Create Hotel
                   </Link>
                 )}
-                
+
                 <div className="h-px bg-white/20 my-1" aria-hidden="true"></div>
-                
+
                 <Button
                   variant="ghost"
                   size="sm"
