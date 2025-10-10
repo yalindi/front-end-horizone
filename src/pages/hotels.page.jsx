@@ -134,8 +134,8 @@ const HotelsPage = () => {
           </div>
 
           {/* Mobile Filters Overlay */}
-          {showFilters && (
-            <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50">
+          {showFilters && (<div className="lg:hidden fixed inset-0 z-50 bg-transparent">
+            
               <div className="absolute right-0 top-0 h-full w-80 bg-white p-6 overflow-y-auto">
                 <FilterSidebar
                   locations={locationsData || []}
@@ -162,7 +162,7 @@ const HotelsPage = () => {
           )}
 
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {/* Loading State */}
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -212,7 +212,7 @@ const HotelsPage = () => {
   );
 };
 
-// Skeleton component for loading state
+
 const HotelCardSkeleton = () => (
   <div className="bg-white rounded-lg shadow-md overflow-hidden">
     <Skeleton className="h-48 w-full" />
