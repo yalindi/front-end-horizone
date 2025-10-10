@@ -188,8 +188,7 @@ function Navigation() {
               <div className="flex flex-col space-y-3 py-2">
                 <Link
                   to="/"
-                  // className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
-                  className={`text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1 ${location.pathname === '/'
+                  className={`text-sm font-medium transition-colors rounded px-2 py-1 ${location.pathname === '/'
                     ? 'text-white bg-white/20'
                     : 'hover:text-gray-300'
                     }`}
@@ -202,8 +201,7 @@ function Navigation() {
 
                 <Link
                   to="/hotels"
-                  // className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
-                  className={`text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1 ${location.pathname === '/hotels'
+                  className={`text-sm font-medium transition-colors rounded px-2 py-1 ${location.pathname === '/hotels'
                       ? 'text-white bg-white/20'
                       : 'hover:text-gray-300'
                     }`}
@@ -217,8 +215,7 @@ function Navigation() {
                 {user?.publicMetadata?.role === "admin" && (
                   <Link
                     to="/admin/create-hotel"
-                    // className="text-sm font-medium hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1"
-                    className={`text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black rounded px-2 py-1 ${location.pathname === '/admin/create-hotel'
+                    className={`text-sm font-medium transition-colorsrounded px-2 py-1 ${location.pathname === '/admin/create-hotel'
                         ? 'text-white bg-white/20'
                         : 'hover:text-gray-300'
                       }`}
