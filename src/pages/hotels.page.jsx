@@ -171,9 +171,7 @@ const HotelsPage = () => {
             </div>
           )}
 
-          {/* Main Content - Improved mobile layout */}
           <div className="flex-1 min-w-0"> 
-            {/* Loading State */}
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {Array.from({ length: 6 }).map((_, index) => (
