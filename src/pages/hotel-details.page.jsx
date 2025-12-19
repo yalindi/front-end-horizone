@@ -8,43 +8,67 @@ import { Building2 } from "lucide-react";
 import { Tv } from "lucide-react";
 import { Coffee } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAddReviewMutation, useGetHotelByIdQuery,useCreateBookingMutation } from "@/lib/api";
+import { useAddReviewMutation, useGetHotelByIdQuery, useCreateBookingMutation } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@clerk/clerk-react";
 import { BookingDialog } from "@/components/BookingDialog";
 import { useNavigate } from "react-router";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
-  const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
+  const { data: hotel, isLoading, isError, error, refetch } = useGetHotelByIdQuery(_id);
   const [addReview, { isLoading: isAddReviewLoading }] = useAddReviewMutation();
   const [createBooking, { isLoading: isCreateBookingLoading }] = useCreateBookingMutation();
-  const navigate = useNavigate(); // ✅ Fix: lowercase "n" - not "Navigate"
-
+  const navigate = useNavigate();
   const { user } = useUser();
 
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [reviewText, setReviewText] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+
   const handleAddReview = async () => {
+    if (!reviewText.trim()) {
+      toast.error("Please enter a review comment");
+      return;
+    }
+
     try {
       await addReview({
         hotelId: _id,
-        comment: "This is a test review",
-        rating: 5,
+        comment: reviewText,
+        rating: reviewRating,
+        userId: user.id,
+        userName: user.fullName || user.firstName || "Anonymous",
       }).unwrap();
+      toast.success("Review added successfully!");
+
+      setReviewDialogOpen(false);
+      setReviewText("");
+      setReviewRating(5);
+      refetch();
+
     } catch (error) {
       console.error("Failed to add review:", error);
+      toast.error(error?.data?.message || "Failed to add review");
     }
   };
 
+
   const handleBook = async (bookingData) => {
-    try{
+    try {
       const result = await createBooking({
         hotelId: _id,
         checkIn: bookingData.checkIn,
         checkOut: bookingData.checkOut,
       }).unwrap();
-      navigate(`/booking/payment?bookingId=${result._id}`); // ✅ Fix: lowercase "n" - not "Navigate"
+      navigate(`/booking/payment?bookingId=${result._id}`);
     }
-    catch(error){
+    catch (error) {
       console.error("Failed to create booking:", error);
     }
   };
@@ -168,18 +192,106 @@ const HotelDetailsPage = () => {
               </div>
             </CardContent>
           </Card>
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Guest Reviews</h2>
+            {hotel?.reviews?.length > 0 ? (
+              <div className="space-y-4">
+                {hotel.reviews.slice(0, 3).map((review, index) => (
+                  <div key={index} className="border rounded-lg p-4">
+                    <div className="flex items-center mb-2">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${i < review.rating
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-gray-300"
+                              }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="ml-2 text-sm font-medium">
+                        {review.rating}/5
+                      </span>
+                    </div>
+                    <p className="text-gray-700">{review.comment}</p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      - {review.userName || "Anonymous"}
+                    </p>
+                  </div>
+                ))}
+                {hotel.reviews.length > 3 && (
+                  <p className="text-gray-500 text-sm">
+                    + {hotel.reviews.length - 3} more reviews
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-500">No reviews yet. Be the first to review!</p>
+            )}
+          </div>
+
           <div className="flex items-center justify-between">
             <div>
               <p className="text-2xl font-bold">${hotel.price}</p>
               <p className="text-sm text-muted-foreground">per night</p>
             </div>
-            <Button
-              disabled={isAddReviewLoading}
-              className={`${isAddReviewLoading ? "opacity-50" : ""}`}
-              onClick={handleAddReview}
-            >
-              <PlusCircle className="w-4 h-4" /> Add Review
-            </Button>
+
+            <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
+              <DialogTrigger asChild>
+                <Button disabled={isAddReviewLoading}>
+                  <PlusCircle className="w-4 h-4 mr-2" /> Add Review
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Your Review</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="rating">Rating</Label>
+                    <div className="flex items-center mt-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewRating(star)}
+                          className="p-1"
+                        >
+                          <Star
+                            className={`h-8 w-8 ${star <= reviewRating
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-gray-300"
+                              }`}
+                          />
+                        </button>
+                      ))}
+                      <span className="ml-2 text-lg font-semibold">
+                        {reviewRating}/5
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="comment">Your Review</Label>
+                    <Textarea
+                      id="comment"
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      placeholder="Share your experience with this hotel..."
+                      rows={4}
+                      className="mt-2"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleAddReview}
+                    disabled={isAddReviewLoading || !reviewText.trim()}
+                    className="w-full"
+                  >
+                    {isAddReviewLoading ? "Submitting..." : "Submit Review"}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             <BookingDialog
               hotelName={hotel.name}
               hotelId={_id}
