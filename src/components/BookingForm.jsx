@@ -128,7 +128,7 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
                 <input
                   type="date"
                   className="border rounded-md px-3 py-2"
-                  min={calculateMinCheckOut()} // FIXED: Added parentheses
+                  min={calculateMinCheckOut()}
                   {...field}
                 />
               </FormControl>
@@ -137,7 +137,6 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
           )}
         />
         
-        {/* Add nights display for better UX */}
         <div className="bg-gray-50 p-3 rounded-md text-center">
           <p className="text-sm text-gray-600">Duration</p>
           <p className="text-lg font-semibold">
@@ -153,12 +152,11 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
         <Button 
           type="submit" 
           className="w-full" 
-          disabled={isLoading || !form.formState.isValid}
+          disabled={isLoading}
         >
           {isLoading ? "Booking..." : `Book for ${nights} nights`}
         </Button>
         
-        {/* Show form-level errors if any */}
         {form.formState.errors.root && (
           <p className="text-red-600 text-sm text-center">
             {form.formState.errors.root.message}
