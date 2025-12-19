@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { set, z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useCreateHotelMutation } from "@/lib/api";
 import { Textarea } from "./ui/textarea";
-
+import {useState} from 'react'
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
+import { AlertCircleIcon } from "lucide-react";
 import { DevTool } from "@hookform/devtools";
 
 const formSchema = z.object({
@@ -36,8 +38,11 @@ const formSchema = z.object({
   }),
 });
 
-export default function HotelCreateFrom() {
-  // 1. Define your form.
+export default function HotelCreateForm() {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,14 +56,18 @@ export default function HotelCreateFrom() {
 
   const [createHotel, { isLoading }] = useCreateHotelMutation();
 
-  // 2. Define a submit handler.
   async function onSubmit(values) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+    setErrorMessage(null);
+    setIsSuccess(false);
+
     try {
       await createHotel(values).unwrap();
+      setIsSuccess(true);
+      form.reset();
+      setTimeout(() => {setIsSuccess(false);},3000)
     } catch (error) {
       console.error(error);
+      setErrorMessage(error.data?.message || "Failed to create hotel.Please try again.");
     }
   }
 
@@ -68,6 +77,19 @@ export default function HotelCreateFrom() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="mt-4 w-1/4 flex flex-col gap-4"
       >
+        {errorMessage && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircleIcon className="h-4 w-4" />
+            <AlertTitle className="ml-2">Error</AlertTitle> 
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+        {isSuccess && (
+          <Alert className="mb-4">
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>Hotel created successfully.</AlertDescription>
+          </Alert>
+        )}
         <FormField
           control={form.control}
           name="name"
@@ -151,7 +173,9 @@ export default function HotelCreateFrom() {
             </FormItem>
           )}
         />
-        <Button type="submit">Create Hotel</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Creating..." : "Create Hotel"}
+        </Button>
         <DevTool control={form.control} />
       </form>
     </Form>
