@@ -147,7 +147,6 @@ function BookingCard({ booking }) {
             </div>
           </div>
           
-          {/* ✅ ADD BOOKING DATE/TIME */}
           <div className="mt-2 text-xs text-gray-500">
             Booked on {isValid(createdAt) ? format(createdAt, "MMM dd, yyyy 'at' h:mm a") : "Date not available"}
           </div>

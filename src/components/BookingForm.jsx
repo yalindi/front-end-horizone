@@ -10,6 +10,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useState, useEffect } from "react"; // REMOVED: use
+import { differenceInDays, addDays } from "date-fns"; // FIXED: differenceInDays
 
 const formSchema = z
   .object({
@@ -19,27 +21,80 @@ const formSchema = z
   .refine((data) => new Date(data.checkOut) > new Date(data.checkIn), {
     message: "Check-out date must be after check-in date",
     path: ["checkOut"],
+  })
+  .refine((data) => {
+    const checkInDate = new Date(data.checkIn);
+    const checkOutDate = new Date(data.checkOut);
+    const nights = differenceInDays(checkOutDate, checkInDate); // FIXED: differenceInDays
+    return nights <= 30;
+  }, {
+    message: "Maximum stay is 30 nights",
+    path: ["checkOut"],
+  })
+  .refine((data) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to midnight for accurate comparison
+    const checkInDate = new Date(data.checkIn);
+    checkInDate.setHours(0, 0, 0, 0); // Also set check-in to midnight
+    return checkInDate >= today;
+  }, {
+    message: "Check-in date cannot be in the past",
+    path: ["checkIn"],
   });
 
 export default function BookingForm({ onSubmit, isLoading, hotelId }) {
-  const today = new Date().toISOString().split("T")[0];
-  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
+  const [nights, setNights] = useState(1);
+  
+  // Get today and tomorrow dates
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = addDays(today, 1);
+  
+  const todayString = today.toISOString().split("T")[0];
+  const tomorrowString = tomorrow.toISOString().split("T")[0];
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      checkIn: today,
-      checkOut: tomorrow,
+      checkIn: todayString,
+      checkOut: tomorrowString,
     },
+    mode: "onChange",
   });
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "checkIn" || name === "checkOut") {
+        const checkIn = value.checkIn ? new Date(value.checkIn) : null;
+        const checkOut = value.checkOut ? new Date(value.checkOut) : null;
+        
+        if (checkIn && checkOut && checkOut > checkIn) {
+          const diff = differenceInDays(checkOut, checkIn);
+          setNights(diff);
+        } else {
+          setNights(1);
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch]); 
 
   const handleSubmit = (values) => {
     onSubmit({
       ...values,
       hotelId,
+      nights,
     });
+  };
+
+  const calculateMinCheckOut = () => {
+    const checkInValue = form.getValues("checkIn");
+    if (checkInValue) {
+      const checkInDate = new Date(checkInValue);
+      const nextDay = addDays(checkInDate, 1);
+      return nextDay.toISOString().split("T")[0];
+    } 
+    return todayString;
   };
 
   return (
@@ -55,7 +110,7 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
                 <input
                   type="date"
                   className="border rounded-md px-3 py-2"
-                  min={today}
+                  min={todayString}
                   {...field}
                 />
               </FormControl>
@@ -73,7 +128,7 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
                 <input
                   type="date"
                   className="border rounded-md px-3 py-2"
-                  min={form.watch("checkIn") || today}
+                  min={calculateMinCheckOut()} // FIXED: Added parentheses
                   {...field}
                 />
               </FormControl>
@@ -81,11 +136,35 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Booking..." : "Book Now"}
+        
+        {/* Add nights display for better UX */}
+        <div className="bg-gray-50 p-3 rounded-md text-center">
+          <p className="text-sm text-gray-600">Duration</p>
+          <p className="text-lg font-semibold">
+            {nights} {nights === 1 ? "night" : "nights"}
+          </p>
+          {nights > 30 && (
+            <p className="text-red-500 text-sm mt-1">
+              Maximum stay is 30 nights
+            </p>
+          )}
+        </div>
+        
+        <Button 
+          type="submit" 
+          className="w-full" 
+          disabled={isLoading || !form.formState.isValid}
+        >
+          {isLoading ? "Booking..." : `Book for ${nights} nights`}
         </Button>
+        
+        {/* Show form-level errors if any */}
+        {form.formState.errors.root && (
+          <p className="text-red-600 text-sm text-center">
+            {form.formState.errors.root.message}
+          </p>
+        )}
       </form>
     </Form>
   );
 }
-
